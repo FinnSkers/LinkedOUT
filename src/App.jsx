@@ -271,7 +271,7 @@ export default function App() {
         {activeTab === 'salary' && (
           <SalaryShareBoard 
             posts={posts}
-            onSubmitSalary={() => {}}
+            onSubmitSalary={handleSubmitStory}
           />
         )}
 

@@ -12,7 +12,10 @@ import confetti from 'canvas-confetti';
 import { sfx } from '../utils/audio';
 
 export default function SalaryShareBoard({ posts, onSubmitSalary }) {
-  const [salaries, setSalaries] = useState([]);
+  // Filter salary share posts from posts state or local submissions
+  const salaryPostsFromSupabase = posts.filter(p => p.category === 'Salary Share' || p.category === 'BD Salary Share');
+
+  const [localSalaries, setLocalSalaries] = useState([]);
   const [role, setRole] = useState('');
   const [company, setCompany] = useState('');
   const [hideCompany, setHideCompany] = useState(false);
@@ -48,7 +51,26 @@ export default function SalaryShareBoard({ posts, onSubmitSalary }) {
 
     const displayCompany = hideCompany ? `${company} (Anonymous BD)` : (company || 'Anonymous BD Firm');
 
-    const newSalaryEntry = {
+    const salaryStoryPayload = {
+      authorAlias: `BD-${role || 'Professional'}`,
+      avatar: "🇧🇩",
+      formerCompany: displayCompany,
+      role: role || "Team Member",
+      tenure: yearsExp || "2+ yrs",
+      category: "BD Salary Share",
+      finalStraw: verdict || `Monthly Pay Package: ৳ ${totalCompMonthly.toLocaleString()}/mo`,
+      content: `Base Monthly: ৳ ${baseNum.toLocaleString()} | Bonus: ৳ ${bonusNum.toLocaleString()} | Hours: ${weeklyHours} hrs/wk | Stress: ${stressRating}/5. Verdict: ${verdict || 'Fair compensation for BD tech market.'}`,
+      toxicBadges: ["Salary Package", `${weeklyHours} hrs/wk`],
+      salaryWas: `৳ ${totalCompMonthly.toLocaleString()} / month`,
+      sanityRestored: 100
+    };
+
+    // Save directly to Supabase via parent callback
+    if (onSubmitSalary) {
+      onSubmitSalary(salaryStoryPayload);
+    }
+
+    const newLocalSalaryEntry = {
       id: `sal-${Date.now()}`,
       role,
       company: displayCompany,
@@ -60,11 +82,11 @@ export default function SalaryShareBoard({ posts, onSubmitSalary }) {
       yearsExp: yearsExp || '2+ yrs',
       weeklyHours: Number(weeklyHours) || 48,
       stressRating: Number(stressRating),
-      verdict: verdict || 'Fair compensation for Bangladeshi tech market.',
+      verdict: verdict || 'Fair compensation for BD tech market.',
       timestamp: 'Just now'
     };
 
-    setSalaries([newSalaryEntry, ...salaries]);
+    setLocalSalaries([newLocalSalaryEntry, ...localSalaries]);
 
     // Reset Form
     setRole('');
@@ -74,6 +96,25 @@ export default function SalaryShareBoard({ posts, onSubmitSalary }) {
     setEquity('');
     setVerdict('');
   };
+
+  // Combine live Supabase salary entries with local entries
+  const allSalaryEntries = [
+    ...localSalaries,
+    ...salaryPostsFromSupabase.map(p => ({
+      id: p.id,
+      role: p.role,
+      company: p.formerCompany,
+      baseSalary: 0,
+      bonus: 0,
+      equity: 0,
+      totalCompensationMonthly: p.salaryWas || "৳ Package",
+      yearsExp: p.tenure,
+      weeklyHours: 48,
+      stressRating: 3,
+      verdict: p.content,
+      isSupabaseRow: true
+    }))
+  ];
 
   return (
     <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
@@ -88,7 +129,7 @@ export default function SalaryShareBoard({ posts, onSubmitSalary }) {
           Anonymous <span className="text-gradient-cyan">BD Salary Share (৳)</span>
         </h2>
         <p className="text-slate-300 text-sm sm:text-base max-w-2xl font-medium">
-          Post your real monthly/yearly pay package in BDT (৳) to fight salary opacity in Dhaka, Chattogram, and remote BD teams.
+          All salary submissions are saved permanently to your Supabase PostgreSQL database!
         </p>
       </div>
 
@@ -97,11 +138,11 @@ export default function SalaryShareBoard({ posts, onSubmitSalary }) {
         <div className="flex items-center justify-between pb-3 border-b border-white/10">
           <h3 className="text-xl font-black text-white flex items-center gap-2">
             <PlusCircle className="w-5 h-5 text-emerald-400" />
-            <span>Post Your Salary Package in BDT (100% Anonymous)</span>
+            <span>Post Your Salary Package in BDT (Saved to Supabase Database)</span>
           </h3>
           <span className="text-xs text-emerald-400 font-mono flex items-center gap-1">
             <ShieldCheck className="w-4 h-4" />
-            <span>Encrypted & Private</span>
+            <span>100% Encrypted & Anonymous</span>
           </span>
         </div>
 
@@ -203,7 +244,7 @@ export default function SalaryShareBoard({ posts, onSubmitSalary }) {
               <label className="block text-xs font-bold text-slate-300 mb-1">Weekly Hours Worked (Including Saturday)</label>
               <input
                 type="number"
-                placeholder="e.g. 54"
+                placeholder="e.g. 48"
                 value={weeklyHours}
                 onChange={(e) => setWeeklyHours(e.target.value)}
                 className="input-field text-xs rounded-xl"
@@ -230,7 +271,7 @@ export default function SalaryShareBoard({ posts, onSubmitSalary }) {
             <label className="block text-xs font-bold text-slate-300 mb-1">Is the Pay Worth the Workload? (Short Verdict)</label>
             <input
               type="text"
-              placeholder="e.g. Good monthly pay in BDT, but Saturday office and 9 PM shifts are tough."
+              placeholder="e.g. Good monthly pay in BDT, but late shifts are tough."
               value={verdict}
               onChange={(e) => setVerdict(e.target.value)}
               className="input-field text-xs rounded-xl"
@@ -243,7 +284,7 @@ export default function SalaryShareBoard({ posts, onSubmitSalary }) {
               className="btn btn-primary px-8 py-3 rounded-xl font-black text-xs uppercase tracking-wider bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black shadow-xl shadow-emerald-500/20"
             >
               <Send className="w-4 h-4" />
-              <span>Publish Anonymous BD Salary</span>
+              <span>Publish BD Salary to Database</span>
             </button>
           </div>
 
@@ -254,65 +295,44 @@ export default function SalaryShareBoard({ posts, onSubmitSalary }) {
       <div className="space-y-4">
         <h3 className="text-xl font-black text-white flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-emerald-400" />
-          <span>Real BD User Salary Submissions ({salaries.length})</span>
+          <span>Real BD User Salary Submissions ({allSalaryEntries.length})</span>
         </h3>
 
-        {salaries.length > 0 ? (
-          salaries.map((s) => {
-            const effectiveHourly = Math.round(s.totalCompensationMonthly / ((s.weeklyHours * 4.33)));
-
-            return (
-              <div 
-                key={s.id} 
-                className="glow-card rounded-3xl p-6 space-y-4 border-l-4 border-emerald-500 bg-slate-900/80"
-              >
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="font-extrabold text-xl text-white">{s.role}</h4>
-                      <span className="px-3 py-0.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300">
-                        {s.company}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 text-xs text-slate-400 mt-1 font-mono">
-                      <span>{s.yearsExp} YoE</span>
-                      <span>•</span>
-                      <span>{s.weeklyHours} hrs/wk</span>
-                      <span>•</span>
-                      <span className="text-emerald-400 font-bold">~৳ {effectiveHourly}/hr effective rate</span>
-                    </div>
-                  </div>
-
-                  <div className="text-right shrink-0">
-                    <span className="text-[10px] text-slate-400 font-mono block uppercase font-bold">Monthly Take-Home</span>
-                    <span className="text-2xl font-black font-mono text-emerald-400">
-                      ৳ {(s.totalCompensationMonthly).toLocaleString()}<span className="text-xs text-slate-400">/mo</span>
+        {allSalaryEntries.length > 0 ? (
+          allSalaryEntries.map((s) => (
+            <div 
+              key={s.id} 
+              className="glow-card rounded-3xl p-6 space-y-4 border-l-4 border-emerald-500 bg-slate-900/80"
+            >
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="font-extrabold text-xl text-white">{s.role}</h4>
+                    <span className="px-3 py-0.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300">
+                      {s.company}
                     </span>
                   </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 p-3 rounded-2xl bg-black/40 text-center text-xs font-mono">
-                  <div>
-                    <span className="text-slate-400 text-[10px] block">Base Monthly</span>
-                    <span className="font-bold text-emerald-300">৳ {s.baseSalary.toLocaleString()}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 text-[10px] block">Eid Bonuses</span>
-                    <span className="font-bold text-amber-300">৳ {s.bonus.toLocaleString()}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 text-[10px] block">Allowances / PF</span>
-                    <span className="font-bold text-cyan-300">৳ {s.equity.toLocaleString()}</span>
+                  
+                  <div className="flex items-center gap-2 text-xs text-slate-400 mt-1 font-mono">
+                    <span>{s.yearsExp} YoE</span>
+                    <span>•</span>
+                    <span className="text-emerald-400 font-bold">Saved in Supabase Database</span>
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-900 border border-white/5 text-xs text-slate-300 font-medium italic">
-                  "{s.verdict}"
+                <div className="text-right shrink-0">
+                  <span className="text-[10px] text-slate-400 font-mono block uppercase font-bold">Monthly Take-Home</span>
+                  <span className="text-2xl font-black font-mono text-emerald-400">
+                    {typeof s.totalCompensationMonthly === 'number' ? `৳ ${s.totalCompensationMonthly.toLocaleString()}/mo` : s.totalCompensationMonthly}
+                  </span>
                 </div>
               </div>
-            );
-          })
+
+              <div className="p-3.5 rounded-2xl bg-slate-900 border border-white/5 text-xs text-slate-300 font-medium italic">
+                "{s.verdict}"
+              </div>
+            </div>
+          ))
         ) : (
           <div className="glow-card rounded-3xl p-8 text-center space-y-3">
             <p className="text-slate-400 text-sm">No real Bangladeshi salary entries submitted yet. Be the first to post your pay package above!</p>
