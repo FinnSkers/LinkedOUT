@@ -7,6 +7,9 @@ import ResignationModal from './components/ResignationModal';
 import AnonymousChatModal from './components/AnonymousChatModal';
 import MyStoriesDashboard from './components/MyStoriesDashboard';
 import SalaryShareBoard from './components/SalaryShareBoard';
+import ResignationLetterGenerator from './components/ResignationLetterGenerator';
+import LaborLawGuide from './components/LaborLawGuide';
+import ToxicityAnalytics from './components/ToxicityAnalytics';
 import { supabase, TABLE_NAME } from './lib/supabase';
 import { getOrCreateDeviceToken } from './utils/anonymousKey';
 import { LogOut, Lock } from 'lucide-react';
@@ -266,6 +269,18 @@ export default function App() {
           />
         )}
 
+        {activeTab === 'generator' && (
+          <ResignationLetterGenerator />
+        )}
+
+        {activeTab === 'rights' && (
+          <LaborLawGuide />
+        )}
+
+        {activeTab === 'analytics' && (
+          <ToxicityAnalytics />
+        )}
+
         {activeTab === 'mystories' && (
           <MyStoriesDashboard 
             posts={posts}
@@ -314,25 +329,25 @@ export default function App() {
                 </div>
               </div>
               <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                The authentic, privacy-first community where employees anonymously share why they left toxic workplaces, post pay packages, and connect 1-on-1.
+                The authentic, privacy-first community where Bangladeshi employees anonymously share why they left toxic workplaces, post pay packages, and connect 1-on-1.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-8 text-xs font-bold">
+            <div className="flex flex-wrap gap-6 text-xs font-bold">
               <button onClick={() => setActiveTab('feed')} className="hover:text-white transition-colors">
                 Feed of Truth
               </button>
               <button onClick={() => setActiveTab('salary')} className="hover:text-white transition-colors">
-                Salary & Pay Share
+                BD Salary (৳)
               </button>
-              <button onClick={() => setActiveTab('mystories')} className="hover:text-white transition-colors">
-                My Stories & DMs
+              <button onClick={() => setActiveTab('generator')} className="hover:text-white transition-colors">
+                "I Quit" Generator
               </button>
-              <button onClick={() => setActiveTab('calculator')} className="hover:text-white transition-colors">
-                Overtime Calculator
+              <button onClick={() => setActiveTab('rights')} className="hover:text-white transition-colors">
+                Labor Rights
               </button>
-              <button onClick={() => setActiveTab('leaderboard')} className="hover:text-white transition-colors">
-                Red Flag Ranks
+              <button onClick={() => setActiveTab('analytics')} className="hover:text-white transition-colors">
+                Analytics
               </button>
             </div>
 
@@ -344,7 +359,7 @@ export default function App() {
               <span>100% Anonymous • Zero User Accounts Required</span>
             </div>
 
-            <p>© {new Date().getFullYear()} LinkedOut. Reclaiming professional dignity & peace of mind.</p>
+            <p>© {new Date().getFullYear()} LinkedOut Bangladesh. Reclaiming professional dignity & peace of mind.</p>
           </div>
 
         </div>
