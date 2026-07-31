@@ -2,10 +2,10 @@ export const INITIAL_POSTS = [];
 
 export const CATEGORIES = [
   "All Stories",
-  "RTO Mandate",
-  "Burnout & Overtime",
-  "Unsafe Workload",
-  "Phantom Promotion",
-  "Micromanagement",
-  "PIP Trap"
+  "Unpaid Overtime & Saturday Office",
+  "Salary Delay (2-3 Mos)",
+  "Notice Period & Experience Cert Trap",
+  "Chairman / MD Micromanagement",
+  "Phantom Hike & Deferred Review",
+  "Arbitrary PIP / Forced Resignation"
 ];

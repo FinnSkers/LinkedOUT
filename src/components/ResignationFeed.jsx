@@ -3,17 +3,10 @@ import {
   Flame, 
   Search, 
   TrendingUp, 
-  PlusCircle,
-  ShieldCheck,
-  Zap,
-  Sparkles,
-  Building2,
-  Briefcase,
-  DollarSign,
-  Send,
-  Flag,
-  Skull,
-  Lock
+  Zap, 
+  DollarSign, 
+  Send, 
+  Lock 
 } from 'lucide-react';
 import ResignationCard from './ResignationCard';
 import { CATEGORIES } from '../data/seedPosts';
@@ -25,15 +18,15 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
 
-  // Inline "Share Why You Left" Form State
+  // Inline "Share Why You Left" Form State (Bangladeshi Context)
   const [company, setCompany] = useState('');
   const [hideCompany, setHideCompany] = useState(false);
   const [role, setRole] = useState('');
   const [tenure, setTenure] = useState('');
-  const [category, setCategory] = useState('RTO Mandate');
+  const [category, setCategory] = useState('Unpaid Overtime & Saturday Office');
   const [finalStraw, setFinalStraw] = useState('');
   const [storyContent, setStoryContent] = useState('');
-  const [salaryLeft, setSalaryLeft] = useState('$130,000');
+  const [salaryLeft, setSalaryLeft] = useState('৳ 85,000 / month');
 
   const shareBoxRef = useRef(null);
 
@@ -50,14 +43,14 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
       particleCount: 160,
       spread: 85,
       origin: { y: 0.5 },
-      colors: ['#ff0055', '#ff5500', '#00f2fe', '#8a2be2']
+      colors: ['#006a4e', '#f42a41', '#ff5500', '#00f2fe']
     });
 
-    const displayCompany = hideCompany ? `${company} (Anonymous)` : company;
+    const displayCompany = hideCompany ? `${company} (Anonymous BD)` : company;
 
     onSubmitStory({
       authorAlias: `Ex-${role || 'Employee'}`,
-      avatar: "🔥",
+      avatar: "🇧🇩",
       formerCompany: displayCompany,
       role: role || "Former Team Member",
       tenure: tenure || "1+ year",
@@ -101,9 +94,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
   return (
     <div className="space-y-8">
       
-
-
-      {/* HERO SECTION: MAIN FOCUS -> SHARE WHY YOU LEFT */}
+      {/* HERO SECTION: MAIN FOCUS -> SHARE WHY YOU LEFT (BANGLADESH EDITION) */}
       <div 
         id="share-section"
         ref={shareBoxRef}
@@ -113,13 +104,13 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#ff0055]/20 border border-[#ff0055]/40 text-[#ff4d79] text-xs font-black font-mono uppercase tracking-wider mb-2">
               <Zap className="w-4 h-4 text-amber-300 fill-amber-300 animate-pulse" />
-              <span>THE MAIN FOCUS OF LINKEDOUT</span>
+              <span>LINKEDOUT BANGLADESH 🇧🇩</span>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
               Share <span className="text-gradient-fire">Why You Left</span>
             </h1>
             <p className="text-slate-300 text-sm sm:text-base mt-1 font-medium">
-              Did management force a mandatory RTO breach? Stiff your promotion raise? Hospitalize you with 90-hour weeks? Tell your real story anonymously.
+              Mandatory Saturday office? 3-month delayed salary? Withheld experience certificates? Share your real story anonymously without fear.
             </p>
           </div>
 
@@ -129,13 +120,13 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
           </div>
         </div>
 
-        {/* INLINE REAL STORY PUBLISHING FORM */}
+        {/* INLINE REAL STORY PUBLISHING FORM (BD CONTEXT) */}
         <form onSubmit={handleInlineSubmit} className="space-y-4">
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <div className="flex justify-between items-center mb-1">
-                <label className="text-xs font-bold text-slate-300">Former Company *</label>
+                <label className="text-xs font-bold text-slate-300">Former Company / Hub *</label>
                 <label className="text-[10px] text-slate-400 flex items-center gap-1 cursor-pointer">
                   <input 
                     type="checkbox"
@@ -149,7 +140,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
               <input
                 type="text"
                 required
-                placeholder="e.g. Amazon, Goldman Sachs"
+                placeholder="e.g. Tech Firm (Gulshan / Banani / Uttara)"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 className="input-field text-xs py-2.5 rounded-xl bg-slate-900/90"
@@ -160,7 +151,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
               <label className="block text-xs font-bold text-slate-300 mb-1">Your Role / Job Title</label>
               <input
                 type="text"
-                placeholder="e.g. Senior Software Lead"
+                placeholder="e.g. Software Engineer / SQA / Executive"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 className="input-field text-xs py-2.5 rounded-xl bg-slate-900/90"
@@ -168,18 +159,18 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">Primary Toxic Reason</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Primary Toxic Issue</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="input-field text-xs py-2.5 rounded-xl bg-slate-900/90"
               >
-                <option value="RTO Mandate">Mandatory RTO / Contract Breach</option>
-                <option value="Burnout & Overtime">Burnout & 90hr Overtime</option>
-                <option value="Unsafe Workload">Unsafe Workload / Understaffing</option>
-                <option value="Phantom Promotion">Phantom Promotion (No Pay Bump)</option>
-                <option value="Micromanagement">Micromanagement & Keystroke Tracking</option>
-                <option value="PIP Trap">Arbitrary PIP Setup</option>
+                <option value="Unpaid Overtime & Saturday Office">Unpaid Overtime & Saturday Office</option>
+                <option value="Salary Delay (2-3 Mos)">Salary Delay (2-3 Months Unpaid)</option>
+                <option value="Notice Period & Experience Cert Trap">Experience Cert & Release Letter Withheld</option>
+                <option value="Chairman / MD Micromanagement">Chairman / Family MD Micromanagement</option>
+                <option value="Phantom Hike & Deferred Review">Phantom Hike & Deferred Appraisal</option>
+                <option value="Arbitrary PIP / Forced Resignation">Arbitrary PIP & Forced Resignation</option>
               </select>
             </div>
           </div>
@@ -190,7 +181,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
               <input
                 type="text"
                 required
-                placeholder="e.g. VP revoked written remote agreement with 10 days notice after I bought a home."
+                placeholder="e.g. Management withheld my experience certificate after 3 months notice."
                 value={finalStraw}
                 onChange={(e) => setFinalStraw(e.target.value)}
                 className="input-field text-xs py-2.5 rounded-xl bg-slate-900/90"
@@ -198,10 +189,10 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">Left-Behind Salary / Pay Package</label>
+              <label className="block text-xs font-bold text-slate-300 mb-1">Left-Behind Monthly Pay (৳ BDT)</label>
               <input
                 type="text"
-                placeholder="e.g. $185,000 + RSUs"
+                placeholder="e.g. ৳ 85,000 / month (or ৳ 12 Lakh / yr)"
                 value={salaryLeft}
                 onChange={(e) => setSalaryLeft(e.target.value)}
                 className="input-field text-xs py-2.5 rounded-xl bg-slate-900/90"
@@ -210,20 +201,20 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1">Your Full Story (What led to this? How did management react? How is your life now?) *</label>
+            <label className="block text-xs font-bold text-slate-300 mb-1">Your Story (Describe what happened in detail) *</label>
             <textarea
               required
               rows={4}
               value={storyContent}
               onChange={(e) => setStoryContent(e.target.value)}
-              placeholder="Write your raw story here... Be as specific and real as possible."
+              placeholder="Share what happened at your workplace in Dhaka / Chattogram... Be honest and raw."
               className="input-field text-xs rounded-xl bg-slate-900/90 leading-relaxed"
             />
           </div>
 
           <div className="flex items-center justify-between gap-4 pt-2">
             <span className="text-xs text-slate-400 font-mono">
-              {storyContent.length} characters written • No login or email required
+              {storyContent.length} characters • 100% Anonymous BD Platform
             </span>
 
             <button
@@ -231,7 +222,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
               className="btn btn-primary px-8 py-3 rounded-xl font-black text-xs uppercase tracking-wider shadow-xl shadow-[#ff0055]/40 hover:scale-105 transition-all"
             >
               <Send className="w-4 h-4" />
-              <span>Publish My Story to Feed</span>
+              <span>Publish Story (100% Anonymous)</span>
             </button>
           </div>
 
@@ -245,7 +236,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="Search company, role, or final straw..."
+            placeholder="Search company, role, or issue..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="input-field pl-10 text-xs sm:text-sm py-2.5 rounded-xl bg-slate-900/90"
@@ -300,11 +291,11 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
         ) : (
           <div className="glow-card p-12 rounded-3xl text-center space-y-4">
             <div className="w-20 h-20 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center mx-auto text-4xl shadow-inner">
-              📝
+              🇧🇩
             </div>
             <h3 className="text-2xl font-bold text-white">No Stories Match Your Filter</h3>
             <p className="text-slate-400 text-sm max-w-md mx-auto">
-              Be the first employee to share a story for this specific category!
+              Be the first Bangladeshi employee to share why you quit above!
             </p>
           </div>
         )}

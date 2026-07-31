@@ -32,9 +32,11 @@ export default function Navbar({ activeTab, setActiveTab, onScrollToShare }) {
             <div className="flex items-center gap-1.5">
               <span className="font-black text-2xl tracking-tight text-white">Linked</span>
               <span className="font-black text-2xl tracking-tight text-gradient-fire">Out</span>
-              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#ff0055]/20 text-[#ff4d79] border border-[#ff0055]/40 font-mono font-black ml-1 uppercase shadow-sm">REAL STORIES</span>
+              <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-mono font-black ml-1 uppercase shadow-sm flex items-center gap-1">
+                <span>🇧🇩 BD EDITION</span>
+              </span>
             </div>
-            <p className="text-[11px] text-slate-400 font-bold hidden sm:block">Where employees share the real reasons they quit</p>
+            <p className="text-[11px] text-slate-400 font-bold hidden sm:block">Where Bangladeshi employees share why they quit</p>
           </div>
         </div>
 
@@ -61,7 +63,7 @@ export default function Navbar({ activeTab, setActiveTab, onScrollToShare }) {
             }`}
           >
             <DollarSign className="w-4 h-4 text-emerald-400" />
-            <span>Salary & Pay Share</span>
+            <span>BD Salary & Pay Share (৳)</span>
           </button>
 
           <button
@@ -85,7 +87,7 @@ export default function Navbar({ activeTab, setActiveTab, onScrollToShare }) {
             }`}
           >
             <Calculator className="w-4 h-4" />
-            <span>Overtime & Sanity Loss</span>
+            <span>Overtime & Salary Loss (৳)</span>
           </button>
         </nav>
 

@@ -1,207 +1,189 @@
 import React, { useState } from 'react';
 import { 
   Calculator, 
-  Sparkles, 
+  Clock, 
+  Flame, 
+  AlertTriangle, 
+  Sparkles,
+  TrendingDown,
+  Building2,
   DollarSign
 } from 'lucide-react';
 import { sfx } from '../utils/audio';
 
 export default function SanityCalculator() {
-  const [salary, setSalary] = useState(120000);
-  const [weeklyHours, setWeeklyHours] = useState(55);
-  const [weekendSlackMsgs, setWeekendSlackMsgs] = useState(12);
-  const [micromanageLevel, setMicromanageLevel] = useState(4);
-  const [rtoDays, setRtoDays] = useState(5);
+  const [monthlySalary, setMonthlySalary] = useState(85000);
+  const [expectedHours, setExpectedHours] = useState(40);
+  const [actualHours, setActualHours] = useState(56);
+  const [weekendWork, setWeekendWork] = useState(true);
+  const [salaryDelayed, setSalaryDelayed] = useState(false);
 
-  const expectedHours = 40;
-  const overtimeHours = Math.max(0, weeklyHours - expectedHours);
-  const hourlyRate = salary / (52 * expectedHours);
-  const stolenOvertimeValue = Math.round(overtimeHours * hourlyRate * 52 * 1.5);
-  
-  const scoreOvertime = Math.min(35, (overtimeHours / 30) * 35);
-  const scoreSlack = Math.min(25, (weekendSlackMsgs / 20) * 25);
-  const scoreMicro = (micromanageLevel / 5) * 25;
-  const scoreRto = (rtoDays / 5) * 15;
-  
-  const toxicityScore = Math.min(100, Math.round(scoreOvertime + scoreSlack + scoreMicro + scoreRto));
+  // Calculations in BDT (৳)
+  const hourlyRateExpected = monthlySalary / (expectedHours * 4.33);
+  const overtimeHoursPerWeek = Math.max(0, actualHours - expectedHours);
+  const unpaidOvertimeMonthlyBDT = Math.round(overtimeHoursPerWeek * 4.33 * hourlyRateExpected);
+  const unpaidOvertimeYearlyBDT = unpaidOvertimeMonthlyBDT * 12;
 
-  const getToxicityVerdict = (score) => {
-    if (score >= 80) return { title: "HAZARDOUS TOXIC WASTELAND ☣️", color: "text-[#ff0055]", desc: "Your workplace is draining your soul, health, and dignity. Quit immediately or demand a 300% hazard bonus." };
-    if (score >= 60) return { title: "HIGH RISK BURNOUT ZONE 🚩", color: "text-amber-500", desc: "You are giving away hundreds of free overtime hours while suffering severe Sunday Scaries." };
-    if (score >= 40) return { title: "MODERATELY DRAINED ⚠️", color: "text-yellow-400", desc: "Manageable, but watch out for incremental scope creep and boundary violations." };
-    return { title: "HEALTHY PEACEFUL OASIS 🌴", color: "text-emerald-400", desc: "Your workplace actually respects boundaries. Treasure this rare unicorn!" };
-  };
+  const actualHourlyRate = Math.round(monthlySalary / (actualHours * 4.33));
+  const wageLossPercentage = Math.round(((hourlyRateExpected - actualHourlyRate) / hourlyRateExpected) * 100);
 
-  const verdict = getToxicityVerdict(toxicityScore);
+  // Toxicity Score (0 - 100)
+  let toxicityScore = 30;
+  if (overtimeHoursPerWeek > 5) toxicityScore += 20;
+  if (overtimeHoursPerWeek > 15) toxicityScore += 25;
+  if (weekendWork) toxicityScore += 15;
+  if (salaryDelayed) toxicityScore += 20;
+  toxicityScore = Math.min(100, toxicityScore);
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
+    <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">
       
-      {/* Header */}
-      <div className="glow-card rounded-3xl p-6 sm:p-8 space-y-3 relative overflow-hidden bg-gradient-to-r from-slate-900 via-rose-950/40 to-slate-900 border-rose-500/30 shadow-2xl">
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-400 text-xs font-black font-mono uppercase tracking-wider">
-          <Sparkles className="w-4 h-4" />
-          <span>WORKPLACE SANITY INDEX</span>
+      {/* Header Card */}
+      <div className="glow-card rounded-3xl p-6 sm:p-8 space-y-3 relative overflow-hidden bg-gradient-to-r from-slate-900 via-emerald-950/40 to-slate-900 border-emerald-500/30 shadow-2xl">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-black font-mono uppercase tracking-wider">
+          <Calculator className="w-4 h-4 text-emerald-400" />
+          <span>BANGLADESH OVERTIME & SALARY DRAIN CALCULATOR (৳ BDT)</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white">
-          Salary vs. Sanity <span className="text-gradient-fire">Calculator</span>
+        <h2 className="text-3xl sm:text-4xl font-black text-white">
+          Calculate Your <span className="text-gradient-cyan">Real Hourly Wage (৳)</span>
         </h2>
-        <p className="text-slate-300 text-sm sm:text-base max-w-2xl font-medium">
-          Quantify how much unpaid labor, stress, and weekend calls are costing you in real dollars and peace of mind.
+        <p className="text-slate-300 text-sm font-medium">
+          See how much money and time you lose to unpaid overtime, Saturday office hours, and late shifts in Bangladesh.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
-        {/* Sliders Form */}
-        <div className="lg:col-span-7 glow-card rounded-3xl p-6 space-y-6">
-          <h3 className="text-xl font-black text-white flex items-center gap-2">
-            <Calculator className="w-5 h-5 text-[#ff0055]" />
-            <span>Workload & Boundary Parameters</span>
+        {/* Input Parameters */}
+        <div className="glow-card rounded-3xl p-6 space-y-5 bg-slate-900/90 border-white/10">
+          <h3 className="text-lg font-black text-white pb-2 border-b border-white/10 flex items-center gap-2">
+            <Clock className="w-5 h-5 text-emerald-400" />
+            <span>Your Monthly Work Parameters</span>
           </h3>
 
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-extrabold">
-              <span className="text-slate-300">Annual Base Salary</span>
-              <span className="text-emerald-400 font-mono text-sm">${salary.toLocaleString()}</span>
+          <div className="space-y-4 text-xs font-bold">
+            <div>
+              <div className="flex justify-between text-slate-300 mb-1">
+                <span>Monthly Base Salary (৳ BDT)</span>
+                <span className="text-emerald-400 font-mono font-black">৳ {monthlySalary.toLocaleString()}</span>
+              </div>
+              <input
+                type="range"
+                min={20000}
+                max={400000}
+                step={5000}
+                value={monthlySalary}
+                onChange={(e) => setMonthlySalary(Number(e.target.value))}
+                className="w-full accent-emerald-400 cursor-pointer"
+              />
             </div>
-            <input
-              type="range"
-              min="40000"
-              max="350000"
-              step="5000"
-              value={salary}
-              onChange={(e) => {
-                sfx.playPop();
-                setSalary(Number(e.target.value));
-              }}
-              className="w-full accent-[#ff0055] bg-slate-800 rounded-lg cursor-pointer h-2.5"
-            />
-          </div>
 
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-extrabold">
-              <span className="text-slate-300">Actual Hours Worked Per Week</span>
-              <span className="text-amber-400 font-mono text-sm">{weeklyHours} hours ({overtimeHours} hrs unpaid OT)</span>
+            <div>
+              <div className="flex justify-between text-slate-300 mb-1">
+                <span>Contracted Weekly Hours</span>
+                <span className="text-cyan-400 font-mono font-black">{expectedHours} hrs/wk</span>
+              </div>
+              <input
+                type="range"
+                min={35}
+                max={50}
+                step={1}
+                value={expectedHours}
+                onChange={(e) => setExpectedHours(Number(e.target.value))}
+                className="w-full accent-cyan-400 cursor-pointer"
+              />
             </div>
-            <input
-              type="range"
-              min="35"
-              max="90"
-              step="1"
-              value={weeklyHours}
-              onChange={(e) => {
-                sfx.playPop();
-                setWeeklyHours(Number(e.target.value));
-              }}
-              className="w-full accent-[#ff0055] bg-slate-800 rounded-lg cursor-pointer h-2.5"
-            />
-          </div>
 
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-extrabold">
-              <span className="text-slate-300">Weekend Slack / Email Pings per Month</span>
-              <span className="text-purple-400 font-mono text-sm">{weekendSlackMsgs} pings</span>
+            <div>
+              <div className="flex justify-between text-slate-300 mb-1">
+                <span>Actual Weekly Hours Worked</span>
+                <span className="text-[#ff0055] font-mono font-black">{actualHours} hrs/wk</span>
+              </div>
+              <input
+                type="range"
+                min={40}
+                max={90}
+                step={1}
+                value={actualHours}
+                onChange={(e) => setActualHours(Number(e.target.value))}
+                className="w-full accent-[#ff0055] cursor-pointer"
+              />
             </div>
-            <input
-              type="range"
-              min="0"
-              max="40"
-              step="1"
-              value={weekendSlackMsgs}
-              onChange={(e) => {
-                sfx.playPop();
-                setWeekendSlackMsgs(Number(e.target.value));
-              }}
-              className="w-full accent-[#ff0055] bg-slate-800 rounded-lg cursor-pointer h-2.5"
-            />
-          </div>
 
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-extrabold">
-              <span className="text-slate-300">Manager Micromanagement Intensity (1-5)</span>
-              <span className="text-rose-400 font-mono text-sm">Level {micromanageLevel} / 5</span>
+            <div className="pt-2 space-y-2">
+              <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={weekendWork}
+                  onChange={(e) => setWeekendWork(e.target.checked)}
+                  className="accent-[#ff0055] w-4 h-4"
+                />
+                <span>Mandatory Saturday Office / Weekend Calls</span>
+              </label>
+
+              <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={salaryDelayed}
+                  onChange={(e) => setSalaryDelayed(e.target.checked)}
+                  className="accent-[#ff0055] w-4 h-4"
+                />
+                <span>Salary Regularly Delayed (1-2+ months)</span>
+              </label>
             </div>
-            <input
-              type="range"
-              min="1"
-              max="5"
-              step="1"
-              value={micromanageLevel}
-              onChange={(e) => {
-                sfx.playPop();
-                setMicromanageLevel(Number(e.target.value));
-              }}
-              className="w-full accent-[#ff0055] bg-slate-800 rounded-lg cursor-pointer h-2.5"
-            />
           </div>
-
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-extrabold">
-              <span className="text-slate-300">Mandatory Days in Office</span>
-              <span className="text-cyan-400 font-mono text-sm">{rtoDays} days / week</span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="5"
-              step="1"
-              value={rtoDays}
-              onChange={(e) => {
-                sfx.playPop();
-                setRtoDays(Number(e.target.value));
-              }}
-              className="w-full accent-[#ff0055] bg-slate-800 rounded-lg cursor-pointer h-2.5"
-            />
-          </div>
-
         </div>
 
-        {/* Results Card */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="glow-card rounded-3xl p-7 space-y-6 text-center relative overflow-hidden border-[#ff0055]/40 shadow-2xl">
-            <div className="text-xs font-black uppercase tracking-widest text-slate-400">
-              YOUR TOXICITY QUOTIENT
-            </div>
-
-            <div className="relative inline-flex items-center justify-center my-2">
-              <div className="text-6xl font-black font-mono text-white tracking-tighter">
-                {toxicityScore}<span className="text-3xl text-[#ff0055]">/100</span>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-slate-900/90 border border-white/10 space-y-1">
-              <div className={`text-base font-black ${verdict.color}`}>
-                {verdict.title}
-              </div>
-              <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                {verdict.desc}
-              </p>
-            </div>
-
-            <div className="space-y-3 pt-3 border-t border-white/10 text-left">
-              <div className="flex items-center justify-between text-xs font-semibold">
-                <span className="text-slate-400">Stolen Overtime Value:</span>
-                <span className="font-mono font-extrabold text-rose-400 text-sm">${stolenOvertimeValue.toLocaleString()} / yr</span>
+        {/* Calculated Results Card */}
+        <div className="glow-card rounded-3xl p-6 space-y-6 bg-slate-900/90 border-emerald-500/30 flex flex-col justify-between">
+          <div>
+            <span className="text-xs font-mono text-slate-400 uppercase font-black">YOUR REAL COMPENSATION METRICS</span>
+            
+            <div className="mt-4 space-y-4">
+              
+              <div className="p-4 rounded-2xl bg-black/50 border border-white/10">
+                <span className="text-xs text-slate-400 block font-bold">Unpaid Overtime Value Stolen</span>
+                <span className="text-3xl font-black font-mono text-[#ff0055]">
+                  ৳ {unpaidOvertimeYearlyBDT.toLocaleString()}<span className="text-xs text-slate-400">/year</span>
+                </span>
+                <p className="text-[11px] text-slate-400 mt-1">
+                  You work ~{overtimeHoursPerWeek * 4.33 | 0} unpaid extra hours every month in BD.
+                </p>
               </div>
 
-              <div className="flex items-center justify-between text-xs font-semibold">
-                <span className="text-slate-400">Effective Hourly Wage:</span>
-                <span className="font-mono font-bold text-slate-200">${Math.round(salary / (weeklyHours * 52))}/hr</span>
-              </div>
-            </div>
+              <div className="grid grid-cols-2 gap-3 text-center font-mono">
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[10px] text-slate-400 block">Expected Hourly Rate</span>
+                  <span className="text-lg font-extrabold text-emerald-400">৳ {Math.round(hourlyRateExpected)}/hr</span>
+                </div>
 
-            <button 
-              onClick={() => {
-                sfx.playShred();
-                alert("Remember: No salary is worth permanent burnout! Start polishing that resume today.");
-              }}
-              className="btn btn-primary w-full text-xs py-3.5 rounded-xl font-bold uppercase tracking-wider"
-            >
-              Get Recommended Exit Strategy
-            </button>
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[10px] text-slate-400 block">Actual Hourly Rate</span>
+                  <span className="text-lg font-extrabold text-[#ff0055]">৳ {actualHourlyRate}/hr</span>
+                </div>
+              </div>
+
+              {/* Toxicity Meter */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs font-black">
+                  <span className="text-slate-300">Workplace Toxicity Rating</span>
+                  <span className="text-[#ff0055]">{toxicityScore}/100</span>
+                </div>
+                <div className="w-full h-3 rounded-full bg-black overflow-hidden border border-white/10">
+                  <div 
+                    className="h-full bg-gradient-to-r from-amber-500 to-[#ff0055] transition-all duration-500"
+                    style={{ width: `${toxicityScore}%` }}
+                  />
+                </div>
+              </div>
+
+            </div>
           </div>
 
+          <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 font-medium flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>Know your worth in BDT before accepting your next job offer in BD.</span>
+          </div>
         </div>
 
       </div>
