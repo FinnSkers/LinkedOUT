@@ -8,20 +8,17 @@ import AnonymousChatModal from './components/AnonymousChatModal';
 import MyStoriesDashboard from './components/MyStoriesDashboard';
 import SalaryShareBoard from './components/SalaryShareBoard';
 import { supabase, TABLE_NAME } from './lib/supabase';
-import { Database, Terminal } from 'lucide-react';
 import { getOrCreateDeviceToken } from './utils/anonymousKey';
+import { LogOut, ShieldCheck, Heart, Lock } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('feed');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chatTargetPost, setChatTargetPost] = useState(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
-
   const [supabaseConnected, setSupabaseConnected] = useState(false);
-  const [supabaseStatusText, setSupabaseStatusText] = useState('Checking Supabase Database...');
-  const [showSqlModal, setShowSqlModal] = useState(false);
 
-  // Hard purge ALL old local storage cache on startup
+  // Hard purge old cache keys
   useEffect(() => {
     localStorage.removeItem('linkedout_posts');
     localStorage.removeItem('linkedout_posts_real');
@@ -30,7 +27,7 @@ export default function App() {
 
   const [posts, setPosts] = useState([]);
 
-  // Fetch Real User Posts from Supabase on Mount
+  // Fetch Real User Posts from Supabase
   useEffect(() => {
     async function loadSupabasePosts() {
       try {
@@ -40,10 +37,9 @@ export default function App() {
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.warn("Supabase load error:", error.message);
+          console.warn("Supabase connection error:", error.message);
           setPosts([]);
           setSupabaseConnected(false);
-          setSupabaseStatusText(`Supabase Table '${TABLE_NAME}' ready for 1st Real User Post`);
         } else if (data && data.length > 0) {
           const formattedData = data.map(item => ({
             id: item.id,
@@ -60,29 +56,26 @@ export default function App() {
             allowDms: item.allow_dms !== false,
             deviceToken: item.device_token,
             sanityRestored: item.sanity_restored || item.sanityRestored || 98,
-            timestamp: new Date(item.created_at || Date.now()).toLocaleDateString() + " (Real User Post)",
+            timestamp: new Date(item.created_at || Date.now()).toLocaleDateString(),
             reactions: item.reactions || { fire: 1, tea: 1, redFlag: 0, ripSanity: 0, ovation: 1 },
             comments: item.comments || []
           }));
           setPosts(formattedData);
           setSupabaseConnected(true);
-          setSupabaseStatusText(`🟢 Live Supabase Sync ('${TABLE_NAME}' — ${data.length} Real User Posts)`);
         } else {
           setPosts([]);
           setSupabaseConnected(true);
-          setSupabaseStatusText(`🟢 Connected to Supabase ('${TABLE_NAME}' clean — 0 real posts)`);
         }
       } catch (err) {
         setPosts([]);
         setSupabaseConnected(false);
-        setSupabaseStatusText('Supabase Offline / Fallback');
       }
     }
 
     loadSupabasePosts();
   }, []);
 
-  // Toggle DM Availability for a Story
+  // Toggle DM Availability
   const handleToggleDms = async (postId) => {
     let newStatus = true;
     setPosts(prevPosts =>
@@ -129,7 +122,7 @@ export default function App() {
     }, 100);
   };
 
-  // Reaction Handler with Supabase update
+  // Reaction Handler
   const handleReact = async (postId, reactionType) => {
     let updatedReactions = {};
 
@@ -162,7 +155,7 @@ export default function App() {
     }
   };
 
-  // Add Comment Handler with Supabase update
+  // Comment Handler
   const handleAddComment = async (postId, commentText) => {
     let updatedComments = [];
 
@@ -198,7 +191,7 @@ export default function App() {
     }
   };
 
-  // Real User Story Submission with Direct Supabase Insert
+  // Real User Story Submission
   const handleSubmitStory = async (newStoryData) => {
     const currentDeviceToken = getOrCreateDeviceToken();
 
@@ -215,7 +208,7 @@ export default function App() {
     setActiveTab('feed');
 
     try {
-      const { data, error } = await supabase
+      await supabase
         .from(TABLE_NAME)
         .insert([{
           author_alias: newStoryData.authorAlias,
@@ -234,70 +227,22 @@ export default function App() {
           reactions: { fire: 1, tea: 1, redFlag: 0, ripSanity: 0, ovation: 1 },
           comments: []
         }]);
-
-      if (error) {
-        console.warn("Supabase insert note:", error.message);
-      } else {
-        console.log("Real user story published to Supabase!", data);
-      }
     } catch (err) {
       console.warn("Supabase insert exception:", err);
     }
   };
 
-  const sqlSetupScript = `CREATE TABLE public.${TABLE_NAME} (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  author_alias TEXT NOT NULL,
-  avatar TEXT,
-  former_company TEXT NOT NULL,
-  role TEXT,
-  tenure TEXT,
-  category TEXT NOT NULL,
-  final_straw TEXT NOT NULL,
-  content TEXT NOT NULL,
-  toxic_badges JSONB DEFAULT '[]'::jsonb,
-  salary_was TEXT,
-  sanity_restored INT DEFAULT 95,
-  allow_dms BOOLEAN DEFAULT true,
-  device_token TEXT,
-  reactions JSONB DEFAULT '{"fire": 1, "tea": 1, "redFlag": 0, "ripSanity": 0, "ovation": 1}'::jsonb,
-  comments JSONB DEFAULT '[]'::jsonb,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
--- Enable RLS & public policies
-ALTER TABLE public.${TABLE_NAME} ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow public read" ON public.${TABLE_NAME} FOR SELECT USING (true);
-CREATE POLICY "Allow public insert" ON public.${TABLE_NAME} FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update" ON public.${TABLE_NAME} FOR UPDATE USING (true);`;
-
   return (
     <div className="min-h-screen flex flex-col bg-[#05070d] text-slate-100 font-sans selection:bg-[#ff0055] selection:text-white">
       
-      {/* Supabase Status Banner */}
-      <div className="bg-slate-900 border-b border-white/10 px-4 py-2 text-xs flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2 font-mono">
-          <Database className="w-4 h-4 text-emerald-400" />
-          <span className="text-slate-300 font-bold">{supabaseStatusText}</span>
-        </div>
-
-        <button 
-          onClick={() => setShowSqlModal(true)}
-          className="text-[11px] px-3 py-1 rounded-md bg-white/5 hover:bg-white/10 text-cyan-300 border border-cyan-500/30 font-bold font-mono flex items-center gap-1.5"
-        >
-          <Terminal className="w-3.5 h-3.5" />
-          <span>View Supabase SQL Schema</span>
-        </button>
-      </div>
-
-      {/* Header Bar */}
+      {/* Header Navigation */}
       <Navbar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
         onScrollToShare={handleScrollToShare}
       />
 
-      {/* Main App Workspace View */}
+      {/* Main Workspace */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'feed' && (
           <ResignationFeed 
@@ -333,7 +278,7 @@ CREATE POLICY "Allow public update" ON public.${TABLE_NAME} FOR UPDATE USING (tr
         )}
       </main>
 
-      {/* Create / Resignation Post Modal */}
+      {/* Story Creator Modal */}
       <ResignationModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -347,41 +292,60 @@ CREATE POLICY "Allow public update" ON public.${TABLE_NAME} FOR UPDATE USING (tr
         targetPost={chatTargetPost}
       />
 
-      {/* SQL Setup Modal */}
-      {showSqlModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-          <div className="glow-card max-w-2xl w-full p-6 space-y-4 rounded-3xl border-cyan-500/30">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-black text-white flex items-center gap-2">
-                <Database className="w-5 h-5 text-cyan-400" />
-                <span>Supabase SQL Table Schema (linkedout_posts)</span>
-              </h3>
-              <button onClick={() => setShowSqlModal(false)} className="text-slate-400 hover:text-white">✕</button>
+      {/* ELEGANT, PRODUCTION-READY PROPER FOOTER */}
+      <footer className="border-t border-white/10 bg-[#040509] text-slate-400 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-white/10">
+            
+            {/* Brand */}
+            <div className="space-y-2 max-w-md">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ff0055] via-[#ff5500] to-[#ffb703] flex items-center justify-center text-white shadow-lg shadow-[#ff0055]/30">
+                  <LogOut className="w-5 h-5 transform -scale-x-100" />
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="font-black text-2xl tracking-tight text-white">Linked</span>
+                  <span className="font-black text-2xl tracking-tight text-gradient-fire">Out</span>
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                The authentic, privacy-first community where employees anonymously share why they left toxic workplaces, post pay packages, and connect 1-on-1.
+              </p>
             </div>
-            <pre className="p-4 rounded-xl bg-black border border-white/10 text-xs font-mono text-cyan-300 overflow-x-auto selection:bg-cyan-500 selection:text-black">
-              {sqlSetupScript}
-            </pre>
-            <div className="flex justify-end gap-2">
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText(sqlSetupScript);
-                  alert("SQL copied to clipboard!");
-                }} 
-                className="btn btn-primary text-xs"
-              >
-                Copy SQL Script
+
+            {/* Links */}
+            <div className="flex flex-wrap gap-8 text-xs font-bold">
+              <button onClick={() => setActiveTab('feed')} className="hover:text-white transition-colors">
+                Feed of Truth
+              </button>
+              <button onClick={() => setActiveTab('salary')} className="hover:text-white transition-colors">
+                Salary & Pay Share
+              </button>
+              <button onClick={() => setActiveTab('mystories')} className="hover:text-white transition-colors">
+                My Stories & DMs
+              </button>
+              <button onClick={() => setActiveTab('calculator')} className="hover:text-white transition-colors">
+                Overtime Calculator
+              </button>
+              <button onClick={() => setActiveTab('leaderboard')} className="hover:text-white transition-colors">
+                Red Flag Ranks
               </button>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-8 bg-[#05070a] text-center text-xs text-slate-500 space-y-2">
-        <p className="font-bold text-slate-300">
-          LinkedOut — Share Why You Left & Anonymous Salary Transparency.
-        </p>
-        <p className="font-mono text-slate-500">Connected to Supabase Database: gkddsnllqwubtuoulcrh.supabase.co</p>
+          </div>
+
+          {/* Bottom Copyright & Security Note */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <div className="flex items-center gap-2 font-mono text-[11px]">
+              <Lock className="w-3.5 h-3.5 text-emerald-400" />
+              <span>100% Anonymous • Zero User Accounts Required</span>
+            </div>
+
+            <p>© {new Date().getFullYear()} LinkedOut. Reclaiming professional dignity & peace of mind.</p>
+          </div>
+
+        </div>
       </footer>
 
     </div>

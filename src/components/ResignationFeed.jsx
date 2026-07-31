@@ -101,23 +101,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
   return (
     <div className="space-y-8">
       
-      {/* Live Community Impact Ticker */}
-      <div className="overflow-hidden bg-[#ff0055]/10 border-y border-[#ff0055]/30 py-2.5 text-xs font-mono text-slate-200">
-        <div className="animate-marquee whitespace-nowrap flex items-center gap-12 font-bold">
-          <span className="flex items-center gap-2 text-[#ff4d79]">
-            <Flame className="w-4 h-4 text-[#ff0055] animate-bounce" />
-            <span>100% REAL UNFILTERED RESIGNATION STORIES</span>
-          </span>
-          <span className="flex items-center gap-2 text-cyan-400">
-            <DollarSign className="w-4 h-4 text-cyan-400" />
-            <span>ANONYMOUS 1-ON-1 DIRECT CHAT ENABLED</span>
-          </span>
-          <span className="flex items-center gap-2 text-amber-400">
-            <ShieldCheck className="w-4 h-4 text-amber-400" />
-            <span>ZERO AI GENERATED CONTENT — PURE HUMAN TRUTHS</span>
-          </span>
-        </div>
-      </div>
+
 
       {/* HERO SECTION: MAIN FOCUS -> SHARE WHY YOU LEFT */}
       <div 
