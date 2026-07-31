@@ -6,20 +6,17 @@ import {
   Building2, 
   DollarSign, 
   MessageCircleCode, 
-  ShieldCheck,
-  CheckCircle2,
   Clock,
-  Sparkles,
-  Share2,
-  Award
+  Share2
 } from 'lucide-react';
 import { sfx } from '../utils/audio';
 import confetti from 'canvas-confetti';
+import ShareCardModal from './ShareCardModal';
 
 export default function ResignationCard({ post, onReact, onAddComment, onOpenAnonymousChat }) {
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [copiedLink, setCopiedLink] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const reactions = post.reactions || { fire: 1, tea: 1, redFlag: 0, ripSanity: 0, ovation: 1 };
   const comments = post.comments || [];
@@ -44,13 +41,6 @@ export default function ResignationCard({ post, onReact, onAddComment, onOpenAno
     sfx.playPop();
     onAddComment(post.id, commentText);
     setCommentText('');
-  };
-
-  const handleShareClick = () => {
-    sfx.playPop();
-    navigator.clipboard.writeText(window.location.href);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
   };
 
   return (
@@ -185,7 +175,7 @@ export default function ResignationCard({ post, onReact, onAddComment, onOpenAno
           </button>
         </div>
 
-        {/* Comment Toggle & Share */}
+        {/* Comment Toggle & Share Modal Trigger */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
@@ -199,11 +189,15 @@ export default function ResignationCard({ post, onReact, onAddComment, onOpenAno
           </button>
 
           <button
-            onClick={handleShareClick}
-            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-all cursor-pointer"
-            title="Share Story"
+            onClick={() => {
+              sfx.playPop();
+              setIsShareModalOpen(true);
+            }}
+            className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-all cursor-pointer flex items-center gap-1.5"
+            title="Share Story Card"
           >
-            {copiedLink ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+            <Share2 className="w-4 h-4 text-cyan-400" />
+            <span className="hidden sm:inline font-bold">Share Card</span>
           </button>
         </div>
 
@@ -213,7 +207,6 @@ export default function ResignationCard({ post, onReact, onAddComment, onOpenAno
       {showComments && (
         <div className="space-y-4 pt-4 border-t border-white/10 animate-fade-in">
           
-          {/* List of Comments */}
           <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
             {comments.length > 0 ? (
               comments.map((c) => (
@@ -233,7 +226,6 @@ export default function ResignationCard({ post, onReact, onAddComment, onOpenAno
             )}
           </div>
 
-          {/* Add Comment Form */}
           <form onSubmit={handleCommentSubmit} className="flex gap-2">
             <input
               type="text"
@@ -252,6 +244,13 @@ export default function ResignationCard({ post, onReact, onAddComment, onOpenAno
 
         </div>
       )}
+
+      {/* Share Card Modal */}
+      <ShareCardModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        post={post}
+      />
 
     </article>
   );

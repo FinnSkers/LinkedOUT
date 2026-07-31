@@ -14,7 +14,8 @@ import {
   VolumeX,
   ChevronDown,
   HelpCircle,
-  BarChart2
+  BarChart2,
+  Building2
 } from 'lucide-react';
 import { sfx } from '../utils/audio';
 
@@ -32,7 +33,7 @@ export default function Navbar({ activeTab, setActiveTab, onScrollToShare }) {
     setMuted(!muted);
   };
 
-  const isMoreTabActive = ['rights', 'analytics', 'mystories', 'calculator', 'leaderboard', 'quiz', 'bdtax', 'polls'].includes(activeTab);
+  const isMoreTabActive = ['rights', 'analytics', 'mystories', 'calculator', 'leaderboard', 'quiz', 'bdtax', 'polls', 'bowls'].includes(activeTab);
 
   return (
     <header className="sticky top-0 z-50 w-full backdrop-blur-2xl bg-[#05070d]/95 border-b border-white/10 shadow-2xl">
@@ -112,6 +113,14 @@ export default function Navbar({ activeTab, setActiveTab, onScrollToShare }) {
 
             {showMoreMenu && (
               <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-slate-900 border border-white/15 shadow-2xl p-2 space-y-1 z-50 animate-fade-in">
+                <button
+                  onClick={() => handleTabClick('bowls')}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 text-left"
+                >
+                  <Building2 className="w-4 h-4 text-cyan-400" />
+                  <span>BD Sector "Bowls" (Water Cooler)</span>
+                </button>
+
                 <button
                   onClick={() => handleTabClick('quiz')}
                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 text-left"

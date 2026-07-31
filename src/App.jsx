@@ -13,6 +13,7 @@ import ToxicityAnalytics from './components/ToxicityAnalytics';
 import ToxicQuiz from './components/ToxicQuiz';
 import BdTaxCalculator from './components/BdTaxCalculator';
 import DailyPolls from './components/DailyPolls';
+import CompanyHub from './components/CompanyHub';
 import { supabase, TABLE_NAME } from './lib/supabase';
 import { getOrCreateDeviceToken } from './utils/anonymousKey';
 import { LogOut, Lock } from 'lucide-react';
@@ -276,6 +277,10 @@ export default function App() {
           <ResignationLetterGenerator />
         )}
 
+        {activeTab === 'bowls' && (
+          <CompanyHub posts={posts} />
+        )}
+
         {activeTab === 'quiz' && (
           <ToxicQuiz />
         )}
@@ -358,11 +363,11 @@ export default function App() {
               <button onClick={() => setActiveTab('generator')} className="hover:text-white transition-colors">
                 "I Quit" Generator
               </button>
+              <button onClick={() => setActiveTab('bowls')} className="hover:text-white transition-colors">
+                BD Sector Bowls
+              </button>
               <button onClick={() => setActiveTab('quiz')} className="hover:text-white transition-colors">
                 Toxic Quiz
-              </button>
-              <button onClick={() => setActiveTab('bdtax')} className="hover:text-white transition-colors">
-                BD Tax Pay
               </button>
             </div>
 
