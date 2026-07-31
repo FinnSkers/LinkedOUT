@@ -13,7 +13,8 @@ import {
   Volume2,
   VolumeX,
   ChevronDown,
-  Sparkles
+  HelpCircle,
+  BarChart2
 } from 'lucide-react';
 import { sfx } from '../utils/audio';
 
@@ -31,7 +32,7 @@ export default function Navbar({ activeTab, setActiveTab, onScrollToShare }) {
     setMuted(!muted);
   };
 
-  const isMoreTabActive = ['rights', 'analytics', 'mystories', 'calculator', 'leaderboard'].includes(activeTab);
+  const isMoreTabActive = ['rights', 'analytics', 'mystories', 'calculator', 'leaderboard', 'quiz', 'bdtax', 'polls'].includes(activeTab);
 
   return (
     <header className="sticky top-0 z-50 w-full backdrop-blur-2xl bg-[#05070d]/95 border-b border-white/10 shadow-2xl">
@@ -110,7 +111,31 @@ export default function Navbar({ activeTab, setActiveTab, onScrollToShare }) {
             </button>
 
             {showMoreMenu && (
-              <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-slate-900 border border-white/15 shadow-2xl p-2 space-y-1 z-50 animate-fade-in">
+              <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-slate-900 border border-white/15 shadow-2xl p-2 space-y-1 z-50 animate-fade-in">
+                <button
+                  onClick={() => handleTabClick('quiz')}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 text-left"
+                >
+                  <HelpCircle className="w-4 h-4 text-[#ff0055]" />
+                  <span>Is My Office Toxic? Quiz</span>
+                </button>
+
+                <button
+                  onClick={() => handleTabClick('bdtax')}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 text-left"
+                >
+                  <Calculator className="w-4 h-4 text-emerald-400" />
+                  <span>BD Income Tax & Net Pay (৳)</span>
+                </button>
+
+                <button
+                  onClick={() => handleTabClick('polls')}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 text-left"
+                >
+                  <BarChart2 className="w-4 h-4 text-amber-400" />
+                  <span>Daily Workplace Vibe Polls</span>
+                </button>
+
                 <button
                   onClick={() => handleTabClick('rights')}
                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 text-left"
@@ -120,27 +145,11 @@ export default function Navbar({ activeTab, setActiveTab, onScrollToShare }) {
                 </button>
 
                 <button
-                  onClick={() => handleTabClick('analytics')}
-                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 text-left"
-                >
-                  <BarChart3 className="w-4 h-4 text-amber-400" />
-                  <span>Workplace Analytics</span>
-                </button>
-
-                <button
                   onClick={() => handleTabClick('mystories')}
                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 text-left"
                 >
                   <UserCheck className="w-4 h-4 text-emerald-400" />
                   <span>My Stories & DMs</span>
-                </button>
-
-                <button
-                  onClick={() => handleTabClick('calculator')}
-                  className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 text-left"
-                >
-                  <Calculator className="w-4 h-4 text-[#ff0055]" />
-                  <span>Overtime Loss (৳)</span>
                 </button>
               </div>
             )}

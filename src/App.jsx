@@ -10,6 +10,9 @@ import SalaryShareBoard from './components/SalaryShareBoard';
 import ResignationLetterGenerator from './components/ResignationLetterGenerator';
 import LaborLawGuide from './components/LaborLawGuide';
 import ToxicityAnalytics from './components/ToxicityAnalytics';
+import ToxicQuiz from './components/ToxicQuiz';
+import BdTaxCalculator from './components/BdTaxCalculator';
+import DailyPolls from './components/DailyPolls';
 import { supabase, TABLE_NAME } from './lib/supabase';
 import { getOrCreateDeviceToken } from './utils/anonymousKey';
 import { LogOut, Lock } from 'lucide-react';
@@ -273,6 +276,18 @@ export default function App() {
           <ResignationLetterGenerator />
         )}
 
+        {activeTab === 'quiz' && (
+          <ToxicQuiz />
+        )}
+
+        {activeTab === 'bdtax' && (
+          <BdTaxCalculator />
+        )}
+
+        {activeTab === 'polls' && (
+          <DailyPolls />
+        )}
+
         {activeTab === 'rights' && (
           <LaborLawGuide />
         )}
@@ -343,11 +358,11 @@ export default function App() {
               <button onClick={() => setActiveTab('generator')} className="hover:text-white transition-colors">
                 "I Quit" Generator
               </button>
-              <button onClick={() => setActiveTab('rights')} className="hover:text-white transition-colors">
-                Labor Rights
+              <button onClick={() => setActiveTab('quiz')} className="hover:text-white transition-colors">
+                Toxic Quiz
               </button>
-              <button onClick={() => setActiveTab('analytics')} className="hover:text-white transition-colors">
-                Analytics
+              <button onClick={() => setActiveTab('bdtax')} className="hover:text-white transition-colors">
+                BD Tax Pay
               </button>
             </div>
 
