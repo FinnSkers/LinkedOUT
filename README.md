@@ -165,8 +165,8 @@ CREATE POLICY "Allow public update" ON public.linkedout_posts FOR UPDATE USING (
 3. **Configure Environment Variables**:
    Create a `.env` file in the root directory:
    ```env
-   VITE_SUPABASE_URL=https://gkddsnllqwubtuoulcrh.supabase.co
-   VITE_SUPABASE_ANON_KEY=sb_publishable_g2bDn-yHyZlFrqujgheO-g_yZ_TSDqV
+   VITE_SUPABASE_URL=https://your-project.supabase.co
+   VITE_SUPABASE_ANON_KEY=your-anon-key-here
    ```
 
 4. **Start the Development Server**:
