@@ -5,7 +5,8 @@ import {
   Calculator, 
   ShieldAlert, 
   LogOut,
-  UserCheck
+  UserCheck,
+  DollarSign
 } from 'lucide-react';
 import { sfx } from '../utils/audio';
 
@@ -52,6 +53,18 @@ export default function Navbar({ activeTab, setActiveTab, onScrollToShare }) {
           </button>
 
           <button
+            onClick={() => handleTabClick('salary')}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black transition-all ${
+              activeTab === 'salary'
+                ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-black shadow-lg shadow-emerald-500/20 scale-105'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <DollarSign className="w-4 h-4 text-emerald-400" />
+            <span>Salary & Pay Share</span>
+          </button>
+
+          <button
             onClick={() => handleTabClick('mystories')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black transition-all ${
               activeTab === 'mystories'
@@ -73,18 +86,6 @@ export default function Navbar({ activeTab, setActiveTab, onScrollToShare }) {
           >
             <Calculator className="w-4 h-4" />
             <span>Overtime & Sanity Loss</span>
-          </button>
-
-          <button
-            onClick={() => handleTabClick('leaderboard')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black transition-all ${
-              activeTab === 'leaderboard'
-                ? 'bg-gradient-to-r from-[#ff0055] to-[#ff5500] text-white shadow-lg shadow-[#ff0055]/30 scale-105'
-                : 'text-slate-400 hover:text-white hover:bg-white/5'
-            }`}
-          >
-            <ShieldAlert className="w-4 h-4" />
-            <span>Red Flag Leaderboard</span>
           </button>
         </nav>
 

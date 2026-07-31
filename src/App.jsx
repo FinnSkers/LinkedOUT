@@ -6,6 +6,7 @@ import Leaderboard from './components/Leaderboard';
 import ResignationModal from './components/ResignationModal';
 import AnonymousChatModal from './components/AnonymousChatModal';
 import MyStoriesDashboard from './components/MyStoriesDashboard';
+import SalaryShareBoard from './components/SalaryShareBoard';
 import { supabase, TABLE_NAME } from './lib/supabase';
 import { Database, Terminal } from 'lucide-react';
 import { getOrCreateDeviceToken } from './utils/anonymousKey';
@@ -27,7 +28,6 @@ export default function App() {
     localStorage.removeItem('linkedout_posts_real_v2');
   }, []);
 
-  // Posts state initialized to 100% EMPTY array (zero pre-created items)
   const [posts, setPosts] = useState([]);
 
   // Fetch Real User Posts from Supabase on Mount
@@ -68,7 +68,6 @@ export default function App() {
           setSupabaseConnected(true);
           setSupabaseStatusText(`🟢 Live Supabase Sync ('${TABLE_NAME}' — ${data.length} Real User Posts)`);
         } else {
-          // Zero records in Supabase = Zero posts on page
           setPosts([]);
           setSupabaseConnected(true);
           setSupabaseStatusText(`🟢 Connected to Supabase ('${TABLE_NAME}' clean — 0 real posts)`);
@@ -310,6 +309,13 @@ CREATE POLICY "Allow public update" ON public.${TABLE_NAME} FOR UPDATE USING (tr
           />
         )}
 
+        {activeTab === 'salary' && (
+          <SalaryShareBoard 
+            posts={posts}
+            onSubmitSalary={() => {}}
+          />
+        )}
+
         {activeTab === 'mystories' && (
           <MyStoriesDashboard 
             posts={posts}
@@ -373,7 +379,7 @@ CREATE POLICY "Allow public update" ON public.${TABLE_NAME} FOR UPDATE USING (tr
       {/* Footer */}
       <footer className="border-t border-white/10 py-8 bg-[#05070a] text-center text-xs text-slate-500 space-y-2">
         <p className="font-bold text-slate-300">
-          LinkedOut — Share Why You Left: 100% Real User Posts & Supabase Sync.
+          LinkedOut — Share Why You Left & Anonymous Salary Transparency.
         </p>
         <p className="font-mono text-slate-500">Connected to Supabase Database: gkddsnllqwubtuoulcrh.supabase.co</p>
       </footer>
