@@ -41,7 +41,7 @@ export default function App() {
           setPosts([]);
           setSupabaseConnected(false);
         } else if (data && data.length > 0) {
-          // Filter out any filler or deleted rows strictly
+          // Filter out filler rows strictly
           const realUserPosts = data.filter(item => 
             item.content && 
             !item.content.includes('DELETED_FILLER_POST') &&
@@ -66,10 +66,10 @@ export default function App() {
             content: item.content,
             toxicBadges: item.toxic_badges || item.toxicBadges || [],
             salaryWas: item.salary_was || item.salaryWas,
-            allowDms: item.allow_dms !== false,
-            deviceToken: item.device_token,
+            allowDms: true,
+            deviceToken: getOrCreateDeviceToken(),
             sanityRestored: item.sanity_restored || item.sanityRestored || 98,
-            timestamp: new Date(item.created_at || Date.now()).toLocaleDateString(),
+            timestamp: new Date(item.created_at || Date.now()).toLocaleDateString() + " (Real Post)",
             reactions: item.reactions || { fire: 1, tea: 1, redFlag: 0, ripSanity: 0, ovation: 1 },
             comments: item.comments || []
           }));
@@ -91,30 +91,17 @@ export default function App() {
 
   // Toggle DM Availability
   const handleToggleDms = async (postId) => {
-    let newStatus = true;
     setPosts(prevPosts =>
       prevPosts.map(post => {
         if (post.id === postId) {
-          newStatus = post.allowDms === false ? true : false;
           return {
             ...post,
-            allowDms: newStatus
+            allowDms: post.allowDms === false ? true : false
           };
         }
         return post;
       })
     );
-
-    if (supabaseConnected && typeof postId === 'string' && postId.includes('-') === false) {
-      try {
-        await supabase
-          .from(TABLE_NAME)
-          .update({ allow_dms: newStatus })
-          .eq('id', postId);
-      } catch (err) {
-        console.warn("Supabase toggle DM error:", err);
-      }
-    }
   };
 
   // Open 1-on-1 Anonymous Chat
@@ -205,7 +192,7 @@ export default function App() {
     }
   };
 
-  // Real User Story Submission
+  // Real User Story Submission to Supabase
   const handleSubmitStory = async (newStoryData) => {
     const currentDeviceToken = getOrCreateDeviceToken();
 
@@ -213,7 +200,7 @@ export default function App() {
       id: `post-${Date.now()}`,
       ...newStoryData,
       deviceToken: currentDeviceToken,
-      allowDms: newStoryData.allowDms !== false,
+      allowDms: true,
       reactions: { fire: 1, tea: 1, redFlag: 0, ripSanity: 0, ovation: 1 },
       comments: []
     };
@@ -222,7 +209,7 @@ export default function App() {
     setActiveTab('feed');
 
     try {
-      await supabase
+      const { data, error } = await supabase
         .from(TABLE_NAME)
         .insert([{
           author_alias: newStoryData.authorAlias,
@@ -236,11 +223,15 @@ export default function App() {
           toxic_badges: newStoryData.toxicBadges,
           salary_was: newStoryData.salaryWas,
           sanity_restored: newStoryData.sanityRestored,
-          allow_dms: newStoryData.allowDms !== false,
-          device_token: currentDeviceToken,
           reactions: { fire: 1, tea: 1, redFlag: 0, ripSanity: 0, ovation: 1 },
           comments: []
-        }]);
+        }]).select();
+
+      if (error) {
+        console.warn("Supabase insert error:", error);
+      } else {
+        console.log("Successfully saved to Supabase:", data);
+      }
     } catch (err) {
       console.warn("Supabase insert exception:", err);
     }
