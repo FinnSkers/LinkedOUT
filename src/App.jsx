@@ -9,7 +9,7 @@ import MyStoriesDashboard from './components/MyStoriesDashboard';
 import SalaryShareBoard from './components/SalaryShareBoard';
 import { supabase, TABLE_NAME } from './lib/supabase';
 import { getOrCreateDeviceToken } from './utils/anonymousKey';
-import { LogOut, ShieldCheck, Heart, Lock } from 'lucide-react';
+import { LogOut, Lock } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('feed');
@@ -41,7 +41,20 @@ export default function App() {
           setPosts([]);
           setSupabaseConnected(false);
         } else if (data && data.length > 0) {
-          const formattedData = data.map(item => ({
+          // Filter out any filler or deleted rows strictly
+          const realUserPosts = data.filter(item => 
+            item.content && 
+            !item.content.includes('DELETED_FILLER_POST') &&
+            item.former_company !== 'MetaMega Global Solutions' &&
+            item.former_company !== 'HyperScale Tech Corp' &&
+            item.author_alias !== 'Ex-Senior Staff Infra Lead' &&
+            item.author_alias !== 'Ex-Finance Lead' &&
+            item.author_alias !== 'Ex-ICU Charge Nurse' &&
+            item.author_alias !== 'Ex-Growth Lead' &&
+            item.author_alias !== 'Ex-Senior Consultant'
+          );
+
+          const formattedData = realUserPosts.map(item => ({
             id: item.id,
             authorAlias: item.author_alias || item.authorAlias,
             avatar: item.avatar || "🔥",
@@ -60,6 +73,7 @@ export default function App() {
             reactions: item.reactions || { fire: 1, tea: 1, redFlag: 0, ripSanity: 0, ovation: 1 },
             comments: item.comments || []
           }));
+
           setPosts(formattedData);
           setSupabaseConnected(true);
         } else {
@@ -292,13 +306,12 @@ export default function App() {
         targetPost={chatTargetPost}
       />
 
-      {/* ELEGANT, PRODUCTION-READY PROPER FOOTER */}
+      {/* ELEGANT PROPER FOOTER */}
       <footer className="border-t border-white/10 bg-[#040509] text-slate-400 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-white/10">
             
-            {/* Brand */}
             <div className="space-y-2 max-w-md">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ff0055] via-[#ff5500] to-[#ffb703] flex items-center justify-center text-white shadow-lg shadow-[#ff0055]/30">
@@ -314,7 +327,6 @@ export default function App() {
               </p>
             </div>
 
-            {/* Links */}
             <div className="flex flex-wrap gap-8 text-xs font-bold">
               <button onClick={() => setActiveTab('feed')} className="hover:text-white transition-colors">
                 Feed of Truth
@@ -335,7 +347,6 @@ export default function App() {
 
           </div>
 
-          {/* Bottom Copyright & Security Note */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
             <div className="flex items-center gap-2 font-mono text-[11px]">
               <Lock className="w-3.5 h-3.5 text-emerald-400" />
