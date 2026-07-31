@@ -98,7 +98,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-6xl mx-auto overflow-hidden">
       
       {/* USER-FRIENDLY & BEAUTIFUL STORY CREATION BOX */}
       <div 
@@ -113,10 +113,10 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
               <Zap className="w-4 h-4 text-amber-300 fill-amber-300" />
               <span>SHARE WHY YOU LEFT 🇧🇩</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-black text-white">
+            <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
               Post Your Resignation Story
             </h1>
-            <p className="text-slate-300 text-sm font-medium">
+            <p className="text-slate-300 text-xs sm:text-sm font-medium">
               100% Anonymous • No account, login, or email required.
             </p>
           </div>
@@ -147,7 +147,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
                   />
                   <span className="flex items-center gap-1 font-semibold">
                     <EyeOff className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Hide company name</span>
+                    <span>Hide name</span>
                   </span>
                 </label>
               </div>
