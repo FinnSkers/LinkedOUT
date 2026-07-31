@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #05070d;
+  --bg-surface: #0c101d;
+  --bg-card: rgba(12, 16, 29, 0.85);
+  --bg-card-hover: rgba(22, 30, 52, 0.95);
+  
+  --accent-magenta: #ff0055;
+  --accent-fire: #ff5500;
+  --accent-gold: #ffb703;
+  --accent-cyan: #00f2fe;
+  --accent-purple: #8a2be2;
+  
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: #f8fafc;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 0, 85, 0.15), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 85% 60%, rgba(138, 43, 226, 0.12), transparent 70%),
+    radial-gradient(circle at 10% 80%, rgba(0, 242, 254, 0.08), transparent 60%);
+  background-attachment: fixed;
+}
+
+/* Ticker Marquee Animation */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: 200%;
+  animation: marquee 25s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Glowing Neon Card */
+.glow-card {
+  background: rgba(15, 22, 41, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.glow-card:hover {
+  border-color: rgba(255, 0, 85, 0.4);
+  box-shadow: 0 15px 40px -10px rgba(255, 0, 85, 0.25), 0 0 20px rgba(255, 0, 85, 0.15);
+  transform: translateY(-3px);
+}
+
+/* Glow Borders */
+.border-glow-magenta {
+  border: 1px solid rgba(255, 0, 85, 0.4);
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
+}
+
+.border-glow-cyan {
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+}
+
+.border-glow-gold {
+  border: 1px solid rgba(255, 183, 3, 0.4);
+  box-shadow: 0 0 15px rgba(255, 183, 3, 0.2);
+}
+
+/* Text Gradients */
+.text-gradient-fire {
+  background: linear-gradient(135deg, #ff0055 0%, #ff5500 50%, #ffb703 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #00c6ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-purple {
+  background: linear-gradient(135deg, #e0aaff 0%, #c77dff 50%, #7b2cbf 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ff0055;
+}
+
+/* Floating Emoji Animation */
+@keyframes floatUp {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-40px) scale(1.4); }
+}
+
+.floating-emoji {
+  position: absolute;
+  pointer-events: none;
+  animation: floatUp 0.8s ease-out forwards;
+}
