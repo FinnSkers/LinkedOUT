@@ -4,65 +4,16 @@ import {
   TrendingUp, 
   Building2, 
   Briefcase, 
-  Clock, 
   ShieldCheck, 
   PlusCircle, 
-  Sparkles, 
-  Award,
-  Send,
-  Zap,
-  Check
+  Send
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { sfx } from '../utils/audio';
 
-const SAMPLE_SALARIES = [
-  {
-    id: 'sal-101',
-    role: 'Senior Staff Infra Engineer',
-    company: 'BigTech Cloud (Seattle)',
-    baseSalary: 235000,
-    bonus: 35000,
-    equity: 75000,
-    totalCompensation: 345000,
-    yearsExp: '6 years',
-    weeklyHours: 50,
-    stressRating: 4,
-    verdict: 'High pay, but high stress and sudden RTO mandates.',
-    timestamp: '2 hours ago'
-  },
-  {
-    id: 'sal-102',
-    role: '2nd Year Investment Banking Associate',
-    company: 'Wall Street Finance (NYC)',
-    baseSalary: 175000,
-    bonus: 85000,
-    equity: 0,
-    totalCompensation: 260000,
-    yearsExp: '3 years',
-    weeklyHours: 90,
-    stressRating: 5,
-    verdict: 'Extremely overpaid, but zero life. 90hr weeks destroy health.',
-    timestamp: '5 hours ago'
-  },
-  {
-    id: 'sal-103',
-    role: 'Senior ICU Nurse (BSN, RN)',
-    company: 'Regional Health Network (Chicago)',
-    baseSalary: 92000,
-    bonus: 5000,
-    equity: 0,
-    totalCompensation: 97000,
-    yearsExp: '5 years',
-    weeklyHours: 48,
-    stressRating: 5,
-    verdict: 'Severely underpaid for unsafe 1:4 ICU nurse-to-patient ratios.',
-    timestamp: '1 day ago'
-  }
-];
-
 export default function SalaryShareBoard({ posts, onSubmitSalary }) {
-  const [salaries, setSalaries] = useState(SAMPLE_SALARIES);
+  // 100% Clean state - ZERO filler/sample data
+  const [salaries, setSalaries] = useState([]);
   const [role, setRole] = useState('');
   const [company, setCompany] = useState('');
   const [hideCompany, setHideCompany] = useState(false);
@@ -302,67 +253,70 @@ export default function SalaryShareBoard({ posts, onSubmitSalary }) {
       <div className="space-y-4">
         <h3 className="text-xl font-black text-white flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-emerald-400" />
-          <span>Real Anonymous Salary Submissions ({salaries.length})</span>
+          <span>Real User Salary Submissions ({salaries.length})</span>
         </h3>
 
-        {salaries.map((s) => {
-          const effectiveRate = Math.round(s.totalCompensation / (s.weeklyHours * 52));
+        {salaries.length > 0 ? (
+          salaries.map((s) => {
+            const effectiveRate = Math.round(s.totalCompensation / (s.weeklyHours * 52));
 
-          return (
-            <div 
-              key={s.id} 
-              className="glow-card rounded-3xl p-6 space-y-4 border-l-4 border-emerald-500 bg-slate-900/80"
-            >
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="font-extrabold text-xl text-white">{s.role}</h4>
-                    <span className="px-3 py-0.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300">
-                      {s.company}
+            return (
+              <div 
+                key={s.id} 
+                className="glow-card rounded-3xl p-6 space-y-4 border-l-4 border-emerald-500 bg-slate-900/80"
+              >
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="font-extrabold text-xl text-white">{s.role}</h4>
+                      <span className="px-3 py-0.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300">
+                        {s.company}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-xs text-slate-400 mt-1 font-mono">
+                      <span>{s.yearsExp} YoE</span>
+                      <span>•</span>
+                      <span>{s.weeklyHours} hrs/wk</span>
+                      <span>•</span>
+                      <span className="text-emerald-400 font-bold">~${effectiveRate}/hr effective pay</span>
+                    </div>
+                  </div>
+
+                  <div className="text-right shrink-0">
+                    <span className="text-[10px] text-slate-400 font-mono block uppercase font-bold">Total Compensation</span>
+                    <span className="text-2xl font-black font-mono text-emerald-400">
+                      ${(s.totalCompensation).toLocaleString()}<span className="text-xs text-slate-400">/yr</span>
                     </span>
                   </div>
-                  
-                  <div className="flex items-center gap-2 text-xs text-slate-400 mt-1 font-mono">
-                    <span>{s.yearsExp} YoE</span>
-                    <span>•</span>
-                    <span>{s.weeklyHours} hrs/wk</span>
-                    <span>•</span>
-                    <span className="text-emerald-400 font-bold">~${effectiveRate}/hr effective pay</span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 p-3 rounded-2xl bg-black/40 text-center text-xs font-mono">
+                  <div>
+                    <span className="text-slate-400 text-[10px] block">Base Salary</span>
+                    <span className="font-bold text-emerald-300">${s.baseSalary.toLocaleString()}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 text-[10px] block">Cash Bonus</span>
+                    <span className="font-bold text-amber-300">${s.bonus.toLocaleString()}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 text-[10px] block">Stock / RSUs</span>
+                    <span className="font-bold text-cyan-300">${s.equity.toLocaleString()}</span>
                   </div>
                 </div>
 
-                {/* TOTAL COMPENSATION BADGE */}
-                <div className="text-right shrink-0">
-                  <span className="text-[10px] text-slate-400 font-mono block uppercase font-bold">Total Compensation</span>
-                  <span className="text-2xl font-black font-mono text-emerald-400">
-                    ${(s.totalCompensation).toLocaleString()}<span className="text-xs text-slate-400">/yr</span>
-                  </span>
+                <div className="p-3.5 rounded-2xl bg-slate-900 border border-white/5 text-xs text-slate-300 font-medium italic">
+                  "{s.verdict}"
                 </div>
               </div>
-
-              {/* Pay Breakdown Pills */}
-              <div className="grid grid-cols-3 gap-2 p-3 rounded-2xl bg-black/40 text-center text-xs font-mono">
-                <div>
-                  <span className="text-slate-400 text-[10px] block">Base Salary</span>
-                  <span className="font-bold text-emerald-300">${s.baseSalary.toLocaleString()}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 text-[10px] block">Cash Bonus</span>
-                  <span className="font-bold text-amber-300">${s.bonus.toLocaleString()}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 text-[10px] block">Stock / RSUs</span>
-                  <span className="font-bold text-cyan-300">${s.equity.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Verdict */}
-              <div className="p-3.5 rounded-2xl bg-slate-900 border border-white/5 text-xs text-slate-300 font-medium italic">
-                "{s.verdict}"
-              </div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <div className="glow-card rounded-3xl p-8 text-center space-y-3">
+            <p className="text-slate-400 text-sm">No real user salary entries submitted yet. Be the first to post your pay package above!</p>
+          </div>
+        )}
       </div>
 
     </div>
