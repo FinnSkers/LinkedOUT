@@ -6,7 +6,13 @@ import {
   Zap, 
   DollarSign, 
   Send, 
-  Lock 
+  Lock,
+  Building2,
+  Briefcase,
+  AlertCircle,
+  FileText,
+  EyeOff,
+  CheckCircle2
 } from 'lucide-react';
 import ResignationCard from './ResignationCard';
 import { CATEGORIES } from '../data/seedPosts';
@@ -18,7 +24,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
 
-  // Inline "Share Why You Left" Form State (Bangladeshi Context)
+  // Form State
   const [company, setCompany] = useState('');
   const [hideCompany, setHideCompany] = useState(false);
   const [role, setRole] = useState('');
@@ -26,7 +32,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
   const [category, setCategory] = useState('Unpaid Overtime & Saturday Office');
   const [finalStraw, setFinalStraw] = useState('');
   const [storyContent, setStoryContent] = useState('');
-  const [salaryLeft, setSalaryLeft] = useState('৳ 85,000 / month');
+  const [salaryLeft, setSalaryLeft] = useState('');
 
   const shareBoxRef = useRef(null);
 
@@ -58,7 +64,7 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
       finalStraw,
       content: storyContent,
       toxicBadges: [category, "Sanity Reclaimed"],
-      salaryWas: salaryLeft,
+      salaryWas: salaryLeft || "৳ Undisclosed",
       sanityRestored: 99,
       timestamp: "Just now"
     });
@@ -69,9 +75,9 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
     setTenure('');
     setFinalStraw('');
     setStoryContent('');
+    setSalaryLeft('');
   };
 
-  // Filter and Sort Logic
   const filteredPosts = posts.filter(post => {
     const matchesCategory = selectedCategory === 'All Stories' || post.category === selectedCategory;
     const matchesSearch = 
@@ -94,76 +100,93 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
   return (
     <div className="space-y-8">
       
-      {/* HERO SECTION: MAIN FOCUS -> SHARE WHY YOU LEFT (BANGLADESH EDITION) */}
+      {/* USER-FRIENDLY & BEAUTIFUL STORY CREATION BOX */}
       <div 
         id="share-section"
         ref={shareBoxRef}
-        className="glow-card rounded-3xl p-6 sm:p-8 relative overflow-hidden bg-gradient-to-r from-[#0c101d] via-[#141c33] to-[#0c101d] border-2 border-[#ff0055]/50 shadow-2xl space-y-6"
+        className="glow-card rounded-3xl p-6 sm:p-10 relative overflow-hidden bg-slate-900/95 border-2 border-[#ff0055]/40 shadow-2xl space-y-8"
       >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-white/10">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#ff0055]/20 border border-[#ff0055]/40 text-[#ff4d79] text-xs font-black font-mono uppercase tracking-wider mb-2">
-              <Zap className="w-4 h-4 text-amber-300 fill-amber-300 animate-pulse" />
-              <span>LINKEDOUT BANGLADESH 🇧🇩</span>
+        {/* Form Header */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-white/10">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ff0055]/20 border border-[#ff0055]/40 text-[#ff4d79] text-xs font-black font-mono uppercase tracking-wider">
+              <Zap className="w-4 h-4 text-amber-300 fill-amber-300" />
+              <span>SHARE WHY YOU LEFT 🇧🇩</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-              Share <span className="text-gradient-fire">Why You Left</span>
+            <h1 className="text-2xl sm:text-4xl font-black text-white">
+              Post Your Resignation Story
             </h1>
-            <p className="text-slate-300 text-sm sm:text-base mt-1 font-medium">
-              Mandatory Saturday office? 3-month delayed salary? Withheld experience certificates? Share your real story anonymously without fear.
+            <p className="text-slate-300 text-sm font-medium">
+              100% Anonymous • No account, login, or email required.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-2 rounded-xl shrink-0">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-4 py-2.5 rounded-2xl shrink-0">
             <Lock className="w-4 h-4" />
-            <span>100% Encrypted & Anonymous</span>
+            <span>Encrypted Device Token active</span>
           </div>
         </div>
 
-        {/* INLINE REAL STORY PUBLISHING FORM (BD CONTEXT) */}
-        <form onSubmit={handleInlineSubmit} className="space-y-4">
+        {/* ERGONOMIC USER-FRIENDLY FORM */}
+        <form onSubmit={handleInlineSubmit} className="space-y-6">
           
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <div className="flex justify-between items-center mb-1">
-                <label className="text-xs font-bold text-slate-300">Former Company / Hub *</label>
-                <label className="text-[10px] text-slate-400 flex items-center gap-1 cursor-pointer">
+          {/* Row 1: Company & Job Role */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <label className="text-xs sm:text-sm font-extrabold text-slate-200 flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-[#ff0055]" />
+                  <span>Former Company / Office Hub *</span>
+                </label>
+                <label className="text-xs text-slate-400 flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors">
                   <input 
                     type="checkbox"
                     checked={hideCompany}
                     onChange={(e) => setHideCompany(e.target.checked)}
-                    className="accent-[#ff0055]"
+                    className="w-4 h-4 accent-[#ff0055] rounded cursor-pointer"
                   />
-                  <span>Hide name</span>
+                  <span className="flex items-center gap-1 font-semibold">
+                    <EyeOff className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Hide company name</span>
+                  </span>
                 </label>
               </div>
               <input
                 type="text"
                 required
-                placeholder="e.g. Tech Firm (Gulshan / Banani / Uttara)"
+                placeholder="e.g. Software Firm (Gulshan / Banani / Uttara)"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
-                className="input-field text-xs py-2.5 rounded-xl bg-slate-900/90"
+                className="w-full px-4 py-3.5 rounded-2xl bg-black/60 border border-white/15 text-slate-100 text-sm font-medium placeholder-slate-500 focus:outline-none focus:border-[#ff0055] focus:ring-2 focus:ring-[#ff0055]/30 transition-all"
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">Your Role / Job Title</label>
+            <div className="space-y-2">
+              <label className="text-xs sm:text-sm font-extrabold text-slate-200 flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-cyan-400" />
+                <span>Your Role / Job Title</span>
+              </label>
               <input
                 type="text"
-                placeholder="e.g. Software Engineer / SQA / Executive"
+                placeholder="e.g. Senior Software Engineer / SQA / Executive"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="input-field text-xs py-2.5 rounded-xl bg-slate-900/90"
+                className="w-full px-4 py-3.5 rounded-2xl bg-black/60 border border-white/15 text-slate-100 text-sm font-medium placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30 transition-all"
               />
             </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">Primary Toxic Issue</label>
+          {/* Row 2: Category & Left Salary */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-2">
+              <label className="text-xs sm:text-sm font-extrabold text-slate-200 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-400" />
+                <span>Primary Workplace Issue</span>
+              </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="input-field text-xs py-2.5 rounded-xl bg-slate-900/90"
+                className="w-full px-4 py-3.5 rounded-2xl bg-black/60 border border-white/15 text-slate-100 text-sm font-medium focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/30 transition-all cursor-pointer"
               >
                 <option value="Unpaid Overtime & Saturday Office">Unpaid Overtime & Saturday Office</option>
                 <option value="Salary Delay (2-3 Mos)">Salary Delay (2-3 Months Unpaid)</option>
@@ -173,53 +196,64 @@ export default function ResignationFeed({ posts, onReact, onAddComment, onSubmit
                 <option value="Arbitrary PIP / Forced Resignation">Arbitrary PIP & Forced Resignation</option>
               </select>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">What was THE FINAL STRAW? *</label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. Management withheld my experience certificate after 3 months notice."
-                value={finalStraw}
-                onChange={(e) => setFinalStraw(e.target.value)}
-                className="input-field text-xs py-2.5 rounded-xl bg-slate-900/90"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1">Left-Behind Monthly Pay (৳ BDT)</label>
+            <div className="space-y-2">
+              <label className="text-xs sm:text-sm font-extrabold text-slate-200 flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-emerald-400" />
+                <span>Left-Behind Monthly Salary (৳ BDT)</span>
+              </label>
               <input
                 type="text"
                 placeholder="e.g. ৳ 85,000 / month (or ৳ 12 Lakh / yr)"
                 value={salaryLeft}
                 onChange={(e) => setSalaryLeft(e.target.value)}
-                className="input-field text-xs py-2.5 rounded-xl bg-slate-900/90"
+                className="w-full px-4 py-3.5 rounded-2xl bg-black/60 border border-white/15 text-slate-100 text-sm font-medium placeholder-slate-500 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all"
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-300 mb-1">Your Story (Describe what happened in detail) *</label>
-            <textarea
+          {/* Row 3: Final Straw */}
+          <div className="space-y-2">
+            <label className="text-xs sm:text-sm font-extrabold text-slate-200 flex items-center gap-2">
+              <Flame className="w-4 h-4 text-[#ff0055]" />
+              <span>What was THE FINAL STRAW that made you quit? *</span>
+            </label>
+            <input
+              type="text"
               required
-              rows={4}
-              value={storyContent}
-              onChange={(e) => setStoryContent(e.target.value)}
-              placeholder="Share what happened at your workplace in Dhaka / Chattogram... Be honest and raw."
-              className="input-field text-xs rounded-xl bg-slate-900/90 leading-relaxed"
+              placeholder="e.g. Management withheld my experience certificate after 3 months notice."
+              value={finalStraw}
+              onChange={(e) => setFinalStraw(e.target.value)}
+              className="w-full px-4 py-3.5 rounded-2xl bg-black/60 border border-white/15 text-slate-100 text-sm font-medium placeholder-slate-500 focus:outline-none focus:border-[#ff0055] focus:ring-2 focus:ring-[#ff0055]/30 transition-all"
             />
           </div>
 
-          <div className="flex items-center justify-between gap-4 pt-2">
-            <span className="text-xs text-slate-400 font-mono">
-              {storyContent.length} characters • 100% Anonymous BD Platform
-            </span>
+          {/* Row 4: Full Story Content */}
+          <div className="space-y-2">
+            <label className="text-xs sm:text-sm font-extrabold text-slate-200 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-purple-400" />
+              <span>Your Full Resignation Story *</span>
+            </label>
+            <textarea
+              required
+              rows={5}
+              value={storyContent}
+              onChange={(e) => setStoryContent(e.target.value)}
+              placeholder="Tell your story clearly... What happened? How did management react? How is your life now?"
+              className="w-full p-4 rounded-2xl bg-black/60 border border-white/15 text-slate-100 text-sm font-medium placeholder-slate-500 leading-relaxed focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 transition-all"
+            />
+          </div>
+
+          {/* Form Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/10">
+            <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>{storyContent.length} characters • 100% Anonymous BD Platform</span>
+            </div>
 
             <button
               type="submit"
-              className="btn btn-primary px-8 py-3 rounded-xl font-black text-xs uppercase tracking-wider shadow-xl shadow-[#ff0055]/40 hover:scale-105 transition-all"
+              className="btn btn-primary w-full sm:w-auto px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-wider shadow-2xl shadow-[#ff0055]/50 hover:scale-105 transition-all bg-gradient-to-r from-[#ff0055] to-[#ff5500] text-white flex items-center justify-center gap-2"
             >
               <Send className="w-4 h-4" />
               <span>Publish Story (100% Anonymous)</span>
